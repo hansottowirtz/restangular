@@ -1066,10 +1066,17 @@ restangular.provider('Restangular', function() {
           if (_.isUndefined(data) || '' === data) {
             data = [];
           }
-          if (!_.isArray(data)) {
-            throw new Error('Response for getList SHOULD be an array and not an object or something else');
+          if (!_.isArray(data) && !_.isPlainObject(data) ) {
+            throw new Error('Response for getList SHOULD be an array or object and not something else');
           }
-          var processedData = _.map(data, function(elem) {
+          var fn;
+          if (_.isArray(data)) {
+            fn = _.map
+          }
+          else {
+            fn = _.mapValues
+          }
+          var processedData = fn(data, function(elem) {
             if (!__this[config.restangularFields.restangularCollection]) {
               return restangularizeElem(__this, elem, what, true, data);
             } else {
